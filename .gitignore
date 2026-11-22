@@ -1,0 +1,16 @@
+# Data
+data/
+outputs/
+
+#R history
+.Rapp.history
+.Rhistory
+.DS_Store
+
+
+# Other common exclusions (keep what applies)
+node_modules/
+__pycache__/
+.venv/
+.env
+*.log
