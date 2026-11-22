@@ -228,6 +228,20 @@ syd <- map_dfr(c("sydonia_2024", "sydonia_2025"), function(cle) {
   ) |>
   distinct(instanceid, tc, bl_norm, sh11, .keep_all = TRUE) |>
   mutate(id_syd = row_number())
+
+# Catégorie de produit : code SH11 (col. H) et libellé (col. I).
+# Un même code porte parfois plusieurs libellés (fautes de saisie, retours à la
+# ligne) : on retient le libellé le plus fréquent du code, nettoyé.
+syd <- syd |>
+  mutate(produit_sh11 = str_pad(str_extract(sh11, "\\d+"), 11, pad = "0"),
+         description  = str_squish(description))
+libelles_sh11 <- syd |>
+  filter(!is.na(produit_sh11), !is.na(description), description != "") |>
+  count(produit_sh11, description) |>
+  group_by(produit_sh11) |> slice_max(n, n = 1, with_ties = FALSE) |> ungroup() |>
+  select(produit_sh11, produit_lib = description)
+syd <- syd |> left_join(libelles_sh11, by = "produit_sh11")
+log_msg("SYDONIA : ", n_distinct(syd$produit_sh11, na.rm = TRUE), " codes SH11 distincts (catégories de produit)")
 log_msg("SYDONIA : ", nrow(syd), " lignes ; ", n_distinct(syd$instanceid), " déclarations ; types : ",
         paste(names(table(syd$type_decl)), table(syd$type_decl), collapse = ", "))
 
@@ -238,6 +252,8 @@ syd_dcl <- syd |>
     type_decl = first(type_decl), num_dcl = first(num_dcl),
     bl_norm = first(bl_norm), num_manifest = first(num_manifest),
     sh2 = first(sh2), section_sh = first(section_sh),
+    # un seul code SH11 par déclaration (vérifié sur 2024 et 2025)
+    produit_sh11 = first(produit_sh11), produit_lib = first(produit_lib),
     n_tc = n_distinct(tc),
     across(c(dau, liquidation, paiement, selectivite, bae, bas), ~ first(.x))
   ) |>

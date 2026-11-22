@@ -99,7 +99,7 @@ lisezmoi <- tibble(Section = c(
     "E - D (2025) / F - D (2024), soit date de sortie - date d'entrée, pour les mouvements de provenance BZV (col. P) et de destination KIN (col. Q). Filtres modifiables dans 00_config.R (CONFIG$filtre_34 et CONFIG$filtre_38).",
     "Plan révisé : bases 13 / 14 (NAVIS export), 17 (SYDONIA BEACH) et 18 (SYDONIA export) pour les indicateurs 36, 37, 43, 44, 45 et 46. Le code est prêt et s'exécute dès que les fichiers sont déposés dans data/ ; colonnes et formats de date à vérifier dans 00_config.R.",
     "Catégories validées par le client, à partir de la colonne C de la base 4 : 1 - 20 pieds (20, 20 H.G), 2 - 40 pieds (40, 40 H.G), 3 - 45 pieds, 4 - Transbordement (toute mention Transbo), 5 - Autres. Une colonne signale par ailleurs la mention H.G.",
-    "Synthese, Comparaison_2024_2025, Mensuel, Tranches, Croisement_SH, Croisements_autres, Ind6_global, Ind6_par_SH, Ind30_non_dedouanes, Ind30_mensuel, Ind46_couverture_EX1 (si bases reçues), GlobalAccess, Rapprochements, Qualite_donnees, Anomalies, Non_calculables, Journal.",
+    "Synthese, Comparaison_2024_2025, Mensuel, Tranches, Croisement_SH, Croisement_produit, Croisements_autres, Ind6_global, Ind6_par_SH, Ind30_non_dedouanes, Ind30_mensuel, Ind46_couverture_EX1 (si bases reçues), GlobalAccess, Rapprochements, Qualite_donnees, Anomalies, Non_calculables, Journal.",
     "Dossier outputs/details : une ligne par observation (délai, statut retenu / exclu, dimensions) pour chaque indicateur."
   ))
 
@@ -113,6 +113,9 @@ ecrire("Comparaison_2024_2025", COMPARAISON, "Comparaison 2024 / 2025",
 #ecrire("Tranches", TRANCHES, "Distribution des délais par tranche")
 ecrire("Croisement_SH", CROISEMENTS_SH, "Croisement des délais avec les catégories de produits (SH)",
        "Modalités à faible effectif (n < 30) à interpréter avec prudence.")
+ecrire("Croisement_produit", CROISEMENT_PRODUIT,
+       "Croisement des délais par catégorie de produit (code SH11 et libellé, SYDONIA bases 15-16, col. H et I)",
+       "Indicateurs 22, 23, 24, 25, 26, 34 et 37. Une ligne par indicateur, année et code SH11, triée par effectif décroissant. Modalités à faible effectif (n < 30) à interpréter avec prudence. Pour 34 et 37, la ligne « Non identifié » regroupe les conteneurs absents de SYDONIA Bureau Port.")
 ecrire("Croisements_autres", CROISEMENTS_AUT, "Autres croisements (type de navire, zone de livraison, scanner, transit)")
 
 if (!is.null(IND6)) {

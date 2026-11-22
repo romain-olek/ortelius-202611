@@ -177,20 +177,24 @@ ajouter("21", man21 |>
           transmute(date_ref = debut_dech, delai_h = diff_cal_h(apur_manifest, debut_dech)))
 
 # --- 22, 23, 26. Délais douaniers (par déclaration IM4) --------------------------
-ajouter("22", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_cal_h(paiement, dau), sh2, section_sh, n_tc))
-ajouter("23", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_h(bae, selectivite), sh2, section_sh, n_tc))
-ajouter("26", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_h(bas, bae), sh2, section_sh, n_tc))
+ajouter("22", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_cal_h(paiement, dau), sh2, section_sh,
+                                     produit_sh11, produit_lib, n_tc))
+ajouter("23", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_h(bae, selectivite), sh2, section_sh,
+                                     produit_sh11, produit_lib, n_tc))
+ajouter("26", syd_im4_u |> transmute(date_ref = dau, delai_h = diff_h(bas, bae), sh2, section_sh,
+                                     produit_sh11, produit_lib, n_tc))
 
 # --- 24. DAU -> analyse de l'image scannée (par conteneur IM4) --------------------
 if (!is.null(ga)) {
   ajouter("24", syd_im4 |> inner_join(lien_syd_ga, by = "id_syd") |>
-            transmute(date_ref = dau, delai_h = diff_cal_h(date_analyse, dau), sh2, section_sh, resultat))
+            transmute(date_ref = dau, delai_h = diff_cal_h(date_analyse, dau), sh2, section_sh,
+                      produit_sh11, produit_lib, resultat))
 }
 
 # --- 25. BAE -> BAD (par conteneur IM4) -------------------------------------------
 ajouter("25", syd_im4 |> inner_join(lien_syd_navis, by = "id_syd") |>
           inner_join(navis |> select(id_nav, bad, type_livraison), by = "id_nav") |>
-          transmute(date_ref = dau, delai_h = diff_h(bad, bae), sh2, section_sh,
+          transmute(date_ref = dau, delai_h = diff_h(bad, bae), sh2, section_sh, produit_sh11, produit_lib,
                     zone_livraison = type_livraison))
 
 # --- 27, 28, 29. Enlèvement et livraison (NAVIS) ---------------------------------
@@ -215,7 +219,8 @@ if (!is.null(lien_tbc_navis)) {
   ajouter("34", tbc34 |> inner_join(lien_tbc_navis, by = "id_tbc") |>
             left_join(sh_par_tc, by = "tc") |>
             transmute(date_ref = entree, delai_h = diff_cal_h(entree, bad),
-                      sh2, section_sh, sens_tbc = imp_exp, destination, acheminement))
+                      sh2, section_sh, produit_sh11, produit_lib,
+                      sens_tbc = imp_exp, destination, acheminement))
 }
 
 # --- 38. Entrée TBC -> embarquement barge pour Kinshasa ----------------------------
@@ -248,9 +253,12 @@ if (!is.null(beach)) {
                                      across(all_of(dims_sh))))
   }
   if (!is.null(lien_beach_tbc)) {
+    # Catégorie de produit (SH11 + libellé) : SYDONIA Bureau Port (bases 15-16),
+    # rapprochée par n° de conteneur, comme pour l'indicateur 34
     ajouter("37", beach |> inner_join(lien_beach_tbc, by = "id_beach") |>
+              left_join(sh_par_tc |> select(tc, produit_sh11, produit_lib), by = "tc") |>
               transmute(date_ref = apurement_im8, delai_h = diff_cal_h(entree, apurement_im8),
-                        across(all_of(dims_sh))))
+                        across(all_of(dims_sh)), produit_sh11, produit_lib))
   }
 }
 
