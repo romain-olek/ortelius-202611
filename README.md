@@ -42,6 +42,7 @@ Les paquets manquants sont installés automatiquement : readxl, dplyr, tidyr, lu
   - **Lisez-moi** : rappel de la méthode.
   - **Synthese** : pour chaque indicateur et chaque année, l'effectif, la moyenne, la médiane, les P10, P25, P75 et P90, les exclusions et les alertes.
   - **Comparaison_2024_2025**, **Mensuel**, **Tranches**.
+  - **Croisement_produit** : délais des indicateurs 22, 23, 24, 25, 26, 34 et 37 par catégorie de produit, soit le code SH11 (col. H des bases 15 et 16) et son libellé (col. I). Si un code a plusieurs libellés, le plus fréquent est retenu. Pour 34 et 37, le produit est retrouvé par n° de conteneur dans SYDONIA ; les conteneurs absents sont regroupés sur une ligne « Non identifié ».
   - **Croisement_SH** (sections et chapitres) et **Croisements_autres** (type de navire, zone de livraison, résultat scanner, taille, régime, destination).
   - **Ind6_global**, **Ind6_par_SH**, **Ind30_non_dedouanes**, **Ind30_mensuel**, **GlobalAccess**.
   - **Rapprochements** : méthode de chaque rapprochement, clé, règle, lignes en entrée, rapprochées et perdues, et indicateurs concernés.

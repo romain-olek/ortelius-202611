@@ -134,6 +134,33 @@ CROISEMENTS <- map_dfr(names(DIMENSIONS), croiser) |>
 CROISEMENTS_SH  <- CROISEMENTS |> filter(dimension %in% c("Section du SH", "Chapitre du SH"))
 CROISEMENTS_AUT <- CROISEMENTS |> filter(!dimension %in% c("Section du SH", "Chapitre du SH"))
 
+# Catégorie de produit : code SH11 (col. H) et libellé (col. I) de SYDONIA
+# (bases 15 et 16). Indicateurs 22, 23, 24, 25, 26, 34 et 37.
+# Pour 34 et 37 (conteneurs TBC / BEACH), le produit n'est connu que si le
+# conteneur figure dans SYDONIA Bureau Port : les autres observations sont
+# gardées sur une ligne "non identifié", pour que part_obs reste sur la base
+# de tous les délais retenus.
+IDS_PRODUIT <- c("22", "23", "24", "25", "26", "34", "37")
+CROISEMENT_PRODUIT <- NULL
+if ("produit_sh11" %in% names(obs)) {
+  CROISEMENT_PRODUIT <- obs |>
+    filter(id %in% IDS_PRODUIT) |>
+    mutate(produit_sh11 = coalesce(produit_sh11, "Non identifié"),
+           produit_lib  = if_else(produit_sh11 == "Non identifié",
+                                  "Conteneur absent de SYDONIA Bureau Port (bases 15-16)", produit_lib)) |>
+    group_by(id, annee, produit_sh11, produit_lib) |>
+    summarise(n = n(), moyenne = mean(delai), mediane = median(delai),
+              p25 = unname(quantile(delai, 0.25)), p75 = unname(quantile(delai, 0.75)),
+              p90 = unname(quantile(delai, 0.9)), .groups = "drop") |>
+    group_by(id, annee) |>
+    mutate(part_obs = n / sum(n)) |>
+    ungroup() |>
+    left_join(meta |> select(id, libelle, unite, unite_obs), by = "id") |>
+    select(id, libelle, unite_obs, unite, annee, produit_sh11, produit_lib,
+           n, part_obs, moyenne, mediane, p25, p75, p90) |>
+    arrange(num_id(id), annee, desc(n))
+}
+
 # -----------------------------------------------------------------------------
 # 6. Global Access : résultats d'analyse et tailles
 # -----------------------------------------------------------------------------

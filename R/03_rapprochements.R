@@ -143,15 +143,15 @@ if (nrow(tbc) > 0) {
 # Source : SYDONIA Bureau Port, complétée par la base BEACH si elle contient le SH.
 # -----------------------------------------------------------------------------
 sh_par_tc <- bind_rows(
-  syd |> select(tc, sh2, section_sh),
+  syd |> select(tc, sh2, section_sh, produit_sh11, produit_lib),
   if (!is.null(beach) && "sh2" %in% names(beach)) beach |> select(tc, sh2, section_sh)) |>
   filter(!is.na(tc), !is.na(sh2)) |>
-  count(tc, sh2, section_sh) |>
+  count(tc, sh2, section_sh, produit_sh11, produit_lib) |>
   group_by(tc) |> slice_max(n, n = 1, with_ties = FALSE) |> ungroup() |> select(-n)
 if (nrow(tbc) > 0) {
   noter_lien("Conteneurs TBC -> code SH", "TBC (bases 5-6)", "SYDONIA (bases 15-16) et BEACH (base 17)",
              "N° de conteneur", "Code SH le plus fréquent du conteneur",
-             n_distinct(tbc$tc), sum(unique(tbc$tc) %in% sh_par_tc$tc), "34 (croisement SH)",
+             n_distinct(tbc$tc), sum(unique(tbc$tc) %in% sh_par_tc$tc), "34, 37 (croisements SH et produit)",
              "Taux faible : les déclarations de transit ne figurent pas dans l'extraction Bureau Port")
 }
 
