@@ -1,3 +1,5 @@
+Updated Nov 22 20226
+
 # PAPN – Plan d'exploitation des données 2024 / 2025 (scripts R)
 
 Ces scripts calculent les indicateurs de délais du plan d'exploitation à partir des bases du Port Autonome de Pointe-Noire, de Congo Terminal (NAVIS), des Douanes (SYDONIA, BESC), de Global Access (scanner) et de TBC (Brazzaville).
