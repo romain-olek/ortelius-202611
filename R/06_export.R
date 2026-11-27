@@ -87,7 +87,7 @@ lisezmoi <- tibble(Section = c(
            CONFIG$percentile_haut * 100, ". Pour 7, 20 et 37 : exclusion sous le P", CONFIG$percentile_bas * 100,
            " et au-dessus du P", CONFIG$percentile_haut * 100, ". Les effectifs exclus sont détaillés dans la synthèse."),
     "Quand l'une des deux dates n'a pas d'heure (DAU, apurement du manifeste, dates TBC, date d'analyse scanner, BESC de régul), le délai est calculé en jours calendaires (même jour = 0).",
-    "Cellules saisies en texte : jour/mois/année pour le CCC (bases 1 à 3), Global Access (4) et TBC (5, 6) ; année/mois/jour pour la PAPN (7, 8), NAVIS transbordement et export (11 à 14) et les bases douane 17 et 18 ; mois/jour/année pour NAVIS import (9, 10) et SYDONIA (15, 16). Les cellules au format date Excel sont lues directement. Les textes non lus sont signalés dans le journal. Formats modifiables dans 00_config.R.",
+    "Cellules saisies en texte : jour/mois/année pour le CCC (bases 1 à 3), Global Access (4) et TBC (5, 6) ; année/mois/jour pour la PAPN (7, 8), NAVIS transbordement et export (11 à 14) ; mois/jour/année pour NAVIS import (9, 10) et SYDONIA (15 à 19). Les cellules au format date Excel sont lues directement. Les textes non lus sont signalés dans le journal. Formats modifiables dans 00_config.R.",
     "Voir l'onglet Rapprochements : clés utilisées et taux de correspondance. Les indicateurs croisant deux bases ne portent que sur les observations rapprochées.",
     paste0("Deux étapes. 1) Un numéro PAPN (colonne A) regroupe plusieurs lignes : arrivée en rade et accostage = premiers horodatages, appareillage = dernier. 2) Les numéros d'un même navire qui se chevauchent dans le temps (début avant la fin de l'escale en cours + ", CONFIG$papn_ecart_escale_h, " h) sont fusionnés en une seule escale physique : changement de poste, retour en rade, escale présente dans les deux bases. Une escale n'est ainsi comptée qu'une fois (indicateurs 9, 10, 17, 18, 19 et 20). Contrôle dans l'onglet Anomalies : nombre d'escales PAPN porte-conteneurs et feeders comparé à NAVIS."),
     "Base BESC de régul disponible du 20/02 au 30/06/2025 seulement. Ratio retenu : sur la période commune (validé par le client). La formule initiale du plan est donnée en second.",
@@ -97,7 +97,7 @@ lisezmoi <- tibble(Section = c(
     "Conteneurs débarqués sans déclaration au moment du scanner (col. W vide), sans aucune exclusion (validé par le client). La part du transbordement et celle des hors gabarit sont indiquées. Devenir reconstitué par la date de livraison NAVIS.",
     "Plan révisé : un seul indicateur tous régimes (IM8 / BLD fusionnés), pour les mouvements TBC de provenance PNR (col. P) et de destination BZV (col. Q) rapprochés de NAVIS. Croisement SH limité aux conteneurs retrouvés dans SYDONIA (et BEACH quand disponible).",
     "E - D (2025) / F - D (2024), soit date de sortie - date d'entrée, pour les mouvements de provenance BZV (col. P) et de destination KIN (col. Q). Filtres modifiables dans 00_config.R (CONFIG$filtre_34 et CONFIG$filtre_38).",
-    "Plan révisé : bases 13 / 14 (NAVIS export), 17 (SYDONIA BEACH) et 18 (SYDONIA export) pour les indicateurs 36, 37, 43, 44, 45 et 46. Le code est prêt et s'exécute dès que les fichiers sont déposés dans data/ ; colonnes et formats de date à vérifier dans 00_config.R.",
+    "Plan révisé : bases 13 / 14 (NAVIS export), 17 (SYDONIA, IM8 apurés au BEACH) et 18 (SYDONIA export) pour les indicateurs 37, 43, 44, 45 et 46. Base 17 : 37 = entrée TBC (D) - apurement IM8 (M), en jours calendaires. Indicateur 36 sans objet (plan) : SYDONIA ne fait pas le lien entre l'IM8 / IM4 et l'EX3, possible à la mise en service du T1.",
     "Catégories validées par le client, à partir de la colonne C de la base 4 : 1 - 20 pieds (20, 20 H.G), 2 - 40 pieds (40, 40 H.G), 3 - 45 pieds, 4 - Transbordement (toute mention Transbo), 5 - Autres. Une colonne signale par ailleurs la mention H.G.",
     "Synthese, Comparaison_2024_2025, Mensuel, Tranches, Croisement_SH, Croisement_produit, Croisements_autres, Ind6_global, Ind6_par_SH, Ind30_non_dedouanes, Ind30_mensuel, Ind46_couverture_EX1 (si bases reçues), GlobalAccess, Rapprochements, Qualite_donnees, Anomalies, Non_calculables, Journal.",
     "Dossier outputs/details : une ligne par observation (délai, statut retenu / exclu, dimensions) pour chaque indicateur."
@@ -114,8 +114,8 @@ ecrire("Comparaison_2024_2025", COMPARAISON, "Comparaison 2024 / 2025",
 ecrire("Croisement_SH", CROISEMENTS_SH, "Croisement des délais avec les catégories de produits (SH)",
        "Modalités à faible effectif (n < 30) à interpréter avec prudence.")
 ecrire("Croisement_produit", CROISEMENT_PRODUIT,
-       "Croisement des délais par catégorie de produit (code SH11 et libellé, SYDONIA bases 15-16, col. H et I)",
-       "Indicateurs 22, 23, 24, 25, 26, 34 et 37. Une ligne par indicateur, année et code SH11, triée par effectif décroissant. Modalités à faible effectif (n < 30) à interpréter avec prudence. Pour 34 et 37, la ligne « Non identifié » regroupe les conteneurs absents de SYDONIA Bureau Port.")
+       "Croisement des délais par catégorie de produit (code SH11 et libellé, SYDONIA bases 15-16 et 17, col. H et I)",
+       "Indicateurs 22, 23, 24, 25, 26, 34 et 37. Une ligne par indicateur, année et code SH11, triée par effectif décroissant. Modalités à faible effectif (n < 30) à interpréter avec prudence. Pour 37, produit lu dans la base 17. Pour 34, la ligne « Non identifié » regroupe les conteneurs absents de SYDONIA Bureau Port et de la base 17.")
 ecrire("Croisements_autres", CROISEMENTS_AUT, "Autres croisements (type de navire, zone de livraison, scanner, transit)")
 
 if (!is.null(IND6)) {

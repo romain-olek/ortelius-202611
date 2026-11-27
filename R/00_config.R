@@ -36,7 +36,7 @@ CONFIG <- list(
     navis_exp_2024 = "^Base[ _-]*14[ _-]",   # manquante à ce jour
     sydonia_2025   = "^Base[ _-]*15[ _-]",
     sydonia_2024   = "^Base[ _-]*16[ _-]",
-    beach          = "^Base[ _-]*17[ _-]",   # SYDONIA bureau BEACH Brazzaville (ind. 36, 37) - non reçue
+    beach          = "^Base[ _-]*17[ _-]",   # SYDONIA, IM8 apurés au BEACH 2024-2025 (ind. 36, 37)
     sydonia_export = "^Base[ _-]*18[ _-]",   # SYDONIA export, bureaux DD141 et DD147, 2024-2025 (ind. 43, 46)
     dmt            = "^Base[ _-]*19[ _-]"    # SYDONIA transbordement : dépôt des DMT 2024-2025 (ind. 16)
   ),
@@ -48,7 +48,11 @@ CONFIG <- list(
                                dechargement_mere = "H", chargement_feeder = "I", imo_transbo = "K"),
   colonnes_navis_export = list(tc = "A", arrivee_terminal = "B", embarquement = "C",
                                navire = "D", imo = "E", appareillage = "F"),
-  colonnes_beach        = list(tc = "C", apurement_im8 = "M", depot_ex3 = "W", sh11 = NA),
+  # Base 17 (reçue le 26/11) : C = NUMERO_CONTENEUR, M = DATE_APUREMENT_MANIFEST
+  # (prise en charge de l'IM8, sans heure), H = CODE_SH11, I = DESCRIPTION_MSE.
+  # Ind. 36 non calculé (pas d'indicateur selon le plan : lien IM8 / EX3
+  # impossible dans SYDONIA avant la mise en service du T1).
+  colonnes_beach        = list(tc = "C", apurement_im8 = "M", sh11 = "H", description = "I"),
   # Base 18 (reçue le 22/11) : J = TYPE_DECL ("EX 1"), O = DATE_LIQUIDATION,
   # R = DATE_IMPRESSION_BAE, A = NUMERO_CONTENEUR, C = COD_BUREAU (DD141 / DD147),
   # M = NUM_DCL, N = DATE_ENREG (identifient la déclaration avec le bureau).
@@ -58,9 +62,8 @@ CONFIG <- list(
   # --- Formats de date des cellules saisies en texte (ordre lubridate) -------
   # Formats confirmés par le client :
   #   jour/mois/année  : CCC (bases 1, 2, 3), Global Access (base 4), TBC (5, 6)
-  #   année/mois/jour  : PAPN (7, 8), NAVIS transbordement et export (11 à 14),
-  #                      bases douane en attente (17, 18)
-  #   mois/jour/année  : NAVIS import (9, 10), SYDONIA (15, 16)
+  #   année/mois/jour  : PAPN (7, 8), NAVIS transbordement et export (11 à 14)
+  #   mois/jour/année  : NAVIS import (9, 10), SYDONIA (15 à 19)
   # Les cellules au format date Excel (numéros de série) sont lues directement,
   # quel que soit le format indiqué ici. La PAPN (AAAAMMJJ + HHMM) et Global
   # Access (date et heure séparées) ont leur propre lecture.
@@ -70,7 +73,7 @@ CONFIG <- list(
   format_date_sydonia      = "mdy HMS",   # bases 15, 16 (y compris la quittance, col. T)
   format_date_navis_tb     = "Ymd HMS",   # bases 11, 12
   format_date_navis_export = "Ymd HMS",   # bases 13, 14
-  format_date_beach        = "Ymd HMS",   # base 17
+  format_date_beach        = "mdy HMS",   # base 17 (vérifié : 2e nombre > 12 sur les dates reçues, 1er jamais)
   format_date_sydonia_exp  = "mdy HMS",   # base 18 (vérifié : 2e nombre > 12 sur 1 586 dates, 1er jamais)
   # Base 19 : DATE_DMT (col. H) au format mois/jour/année (vérifié sur le
   # fichier reçu : 194 573 dates ont un 2e nombre > 12, aucune un 1er > 12) ;

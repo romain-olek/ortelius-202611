@@ -444,10 +444,18 @@ if (!is.na(FICHIERS$beach)) {
     mutate(tc = norm_cle(tc),
            across(any_of(c("apurement_im8", "depot_ex3")), ~ en_date(.x, CONFIG$format_date_beach)))
   if ("sh11" %in% names(beach)) {
-    beach <- beach |> mutate(sh2 = str_sub(str_pad(str_extract(sh11, "\\d+"), 11, pad = "0"), 1, 2),
+    beach <- beach |> mutate(produit_sh11 = str_pad(str_extract(sh11, "\\d+"), 11, pad = "0"),
+                             sh2 = str_sub(produit_sh11, 1, 2),
                              section_sh = sh_section(sh2))
+    # Libellé du produit : celui de la base 17 (col. I), à défaut celui de
+    # SYDONIA Bureau Port pour le même code SH11
+    if (!"description" %in% names(beach)) beach$description <- NA_character_
+    beach <- beach |>
+      left_join(libelles_sh11 |> rename(lib_syd = produit_lib), by = "produit_sh11") |>
+      mutate(produit_lib = coalesce(na_if(str_trim(description), ""), lib_syd)) |>
+      select(-lib_syd)
   }
-  beach <- beach |> distinct() |> mutate(id_beach = row_number())
+  beach <- beach |> select(-any_of("description")) |> distinct() |> mutate(id_beach = row_number())
   log_msg("BEACH : ", nrow(beach), " lignes")
 }
 
