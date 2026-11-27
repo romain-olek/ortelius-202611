@@ -144,7 +144,7 @@ if (nrow(tbc) > 0) {
 # -----------------------------------------------------------------------------
 sh_par_tc <- bind_rows(
   syd |> select(tc, sh2, section_sh, produit_sh11, produit_lib),
-  if (!is.null(beach) && "sh2" %in% names(beach)) beach |> select(tc, sh2, section_sh)) |>
+  if (!is.null(beach) && "sh2" %in% names(beach)) beach |> select(tc, sh2, section_sh, any_of(c("produit_sh11", "produit_lib")))) |>
   filter(!is.na(tc), !is.na(sh2)) |>
   count(tc, sh2, section_sh, produit_sh11, produit_lib) |>
   group_by(tc) |> slice_max(n, n = 1, with_ties = FALSE) |> ungroup() |> select(-n)

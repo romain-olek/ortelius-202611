@@ -21,7 +21,9 @@ Les paquets manquants sont installés automatiquement : readxl, dplyr, tidyr, lu
 
 **Bases reçues en dernier.** Les bases 11 et 12 (NAVIS transbordement) et 13 et 14 (NAVIS export) sont intégrées : indicateurs 15, 44 et 45. Leurs colonnes sont décrites dans `CONFIG$colonnes_navis_tb` et `CONFIG$colonnes_navis_export`.
 
-**Bases encore attendues.** Il suffira de les déposer dans `data/` : la base 17 (SYDONIA bureau BEACH) et la base 18 (SYDONIA export), pour les indicateurs 36, 37, 43 et 46. Le code est écrit et testé sur des fichiers fictifs ; à réception, vérifier les lettres de colonnes et les formats de date dans `00_config.R` (`colonnes_beach`, `colonnes_sydonia_exp`, `format_date_*`). L'indicateur 16 attend la date de dépôt du DMT côté SYDONIA.
+**Base 17 (IM8 apurés au BEACH, 2024-2025).** Intégrée le 26/11/2026 : indicateur 37. 321 conteneurs, dont 289 (90 %) rapprochés d'un mouvement TBC. Colonnes : C (conteneur), M (apurement du manifeste par l'IM8, sans heure), H et I (SH11 et libellé). Dates au format mois/jour/année.
+
+**Bases encore attendues.** Il suffira de les déposer dans `data/` : la base 18 (SYDONIA export), pour les indicateurs 36, 37, 43 et 46. Le code est écrit et testé sur des fichiers fictifs ; à réception, vérifier les lettres de colonnes et les formats de date dans `00_config.R` (`colonnes_beach`, `colonnes_sydonia_exp`, `format_date_*`). L'indicateur 16 attend la date de dépôt du DMT côté SYDONIA.
 
 ## Structure
 
@@ -42,7 +44,7 @@ Les paquets manquants sont installés automatiquement : readxl, dplyr, tidyr, lu
   - **Lisez-moi** : rappel de la méthode.
   - **Synthese** : pour chaque indicateur et chaque année, l'effectif, la moyenne, la médiane, les P10, P25, P75 et P90, les exclusions et les alertes.
   - **Comparaison_2024_2025**, **Mensuel**, **Tranches**.
-  - **Croisement_produit** : délais des indicateurs 22, 23, 24, 25, 26, 34 et 37 par catégorie de produit, soit le code SH11 (col. H des bases 15 et 16) et son libellé (col. I). Si un code a plusieurs libellés, le plus fréquent est retenu. Pour 34 et 37, le produit est retrouvé par n° de conteneur dans SYDONIA ; les conteneurs absents sont regroupés sur une ligne « Non identifié ».
+  - **Croisement_produit** : délais des indicateurs 22, 23, 24, 25, 26, 34 et 37 par catégorie de produit, soit le code SH11 (col. H des bases 15 et 16) et son libellé (col. I). Si un code a plusieurs libellés, le plus fréquent est retenu. Pour 37, le produit est celui de la base 17 (col. H et I). Pour 34, il est retrouvé par n° de conteneur dans SYDONIA et la base 17 ; les conteneurs absents sont regroupés sur une ligne « Non identifié ».
   - **Croisement_SH** (sections et chapitres) et **Croisements_autres** (type de navire, zone de livraison, résultat scanner, taille, régime, destination).
   - **Ind6_global**, **Ind6_par_SH**, **Ind30_non_dedouanes**, **Ind30_mensuel**, **GlobalAccess**.
   - **Rapprochements** : méthode de chaque rapprochement, clé, règle, lignes en entrée, rapprochées et perdues, et indicateurs concernés.
@@ -55,10 +57,10 @@ Les paquets manquants sont installés automatiquement : readxl, dplyr, tidyr, lu
 ## Indicateurs calculés
 
 **Avec les données reçues :**
-- **2025** : 5 à 15, 17 à 30, 34, 38, 44 et 45.
-- **2024** : 9 à 12, 14, 15, 17 à 23, 25 à 29, 34, 38, 44 et 45.
+- **2025** : 5 à 15, 17 à 30, 34, 37, 38, 44 et 45.
+- **2024** : 9 à 12, 14, 15, 17 à 23, 25 à 29, 34, 37, 38, 44 et 45.
 
-**Dès réception des extractions SYDONIA (bases 17 et 18) :** 36, 37, 43 et 46.
+**Dès réception de l'extraction SYDONIA export (base 18) :** 43 et 46.
 
 L'onglet **Non_calculables** liste les autres indicateurs et le motif. Il se met à jour automatiquement.
 
@@ -111,7 +113,9 @@ Les indicateurs 24 et 25 restent au conteneur : l'analyse d'image et le BAD sont
   Une colonne distincte signale la mention H.G.
 - **Indicateurs 44 et 45 :** calculés à partir des seules bases NAVIS export (13 et 14), sans SYDONIA.
 - **Indicateur 15 :** calculé à partir des seules bases NAVIS transbordement (11 et 12), reçues.
-- **Indicateurs 16, 31, 32, 33, 36, 37, 43 et 46 :** en attente des extractions SYDONIA (bases 17 et 18).
+- **Indicateur 36 :** pas d'indicateur. SYDONIA ne fait pas le lien entre l'IM8 / IM4 et l'EX3 ; à reprendre à la mise en service du T1.
+- **Indicateur 37 :** calculé à partir de la base 17 et de TBC (base 5 / 6).
+- **Indicateurs 16, 31, 32, 33, 43 et 46 :** en attente des extractions SYDONIA.
 
 ## Points à valider avec le client
 

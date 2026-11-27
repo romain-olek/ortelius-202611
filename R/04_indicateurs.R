@@ -248,15 +248,17 @@ if (nrow(navis_tb) > 0) {
 # --- 36, 37. Transit international au BEACH (base 17) ------------------------------
 if (!is.null(beach)) {
   dims_sh <- intersect(c("sh2", "section_sh"), names(beach))
-  if (all(c("apurement_im8", "depot_ex3") %in% names(beach))) {
-    ajouter("36", beach |> transmute(date_ref = apurement_im8, delai_h = diff_h(depot_ex3, apurement_im8),
-                                     across(all_of(dims_sh))))
-  }
+  # Indicateur 36 : pas d'indicateur (plan). SYDONIA ne fait pas le lien entre
+  # l'IM8 / IM4 et l'EX3 ; possible à la mise en service du T1.
   if (!is.null(lien_beach_tbc)) {
-    # Catégorie de produit (SH11 + libellé) : SYDONIA Bureau Port (bases 15-16),
-    # rapprochée par n° de conteneur, comme pour l'indicateur 34
-    ajouter("37", beach |> inner_join(lien_beach_tbc, by = "id_beach") |>
-              left_join(sh_par_tc |> select(tc, produit_sh11, produit_lib), by = "tc") |>
+    # Catégorie de produit (SH11 + libellé) : celle de la base 17 (col. H et I),
+    # à défaut SYDONIA Bureau Port (bases 15-16) par n° de conteneur
+    b37 <- beach |> inner_join(lien_beach_tbc, by = "id_beach")
+    if (!"produit_sh11" %in% names(b37)) b37 <- b37 |> mutate(produit_sh11 = NA_character_, produit_lib = NA_character_)
+    ajouter("37", b37 |>
+              left_join(sh_par_tc |> select(tc, sh11_syd = produit_sh11, lib_syd = produit_lib), by = "tc") |>
+              mutate(produit_lib  = if_else(is.na(produit_sh11), lib_syd, produit_lib),
+                     produit_sh11 = coalesce(produit_sh11, sh11_syd)) |>
               transmute(date_ref = apurement_im8, delai_h = diff_cal_h(entree, apurement_im8),
                         across(all_of(dims_sh)), produit_sh11, produit_lib))
   }
